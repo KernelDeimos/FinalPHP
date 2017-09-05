@@ -86,4 +86,19 @@ class L {
                 return NULL;
         }
     }
+
+    private static function is_struct_def($value) {
+        if (gettype($value) === "array") {
+            if (array_key_exists(L::METAKEY, $value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static function assert($check, $message) {
+        if (!$check) {
+            trigger_error($message, E_USER_ERROR);
+        }
+    }
 }
