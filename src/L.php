@@ -109,6 +109,57 @@ class L {
         }
     }
 
+    public static function Marshal($input, $struct) {
+        list ($result, $err) = self::_marshal($input, $struct);
+        if ($err !== NULL) {
+            trigger_error('L::Marshal: '.$err, E_USER_ERROR);
+        }
+        return $result;
+    }
+
+    private static function _marshal($input, $struct) {
+        // Ensure inputs are valid
+        if (!is_array($input)) {
+            return array(NULL, "Input is not an array");
+        }
+        if (!self::is_struct_def($struct)) {
+            return array(NULL,
+                "Struct is not a L::Struct definition");
+        }
+
+        // Ensure meta key exists
+        foreach ($struct as $key => $default_value) {
+            // Skip meta key
+            if ($key === L::METAKEY) {
+                continue;
+            }
+            if (array_key_exists($key, $input)) {
+                // Check if this key is another L::Struct definition
+                $expectedType = $struct[L::METAKEY][$key]['type'];
+                if (self::is_struct_def($expectedType)) {
+                    // Get the input value to compare to
+                    $inVal = $input[$key];
+                    // For this case, NULL is considered the same
+                    // as an ampty array
+                    if ($inVal === NULL) {
+                        $inVal = array();
+                    }
+                    // List 
+                    list ($result, $err) =
+                        self::_marshal($inVal, $expectedType);
+                    if ($err !== NULL) {
+                        return array(NULL,"In $key: ".$err);
+                    }
+                    $struct[$key] = $result;
+                } else {
+                    $struct[$key] = $input[$key];
+                }
+            }
+        }
+        $err = self::CheckStruct($struct, $struct);
+        return array($struct, $err);
+    }
+
     private static function get_default_value_of_type($type) {
         switch ($type) {
             case 'bool':
