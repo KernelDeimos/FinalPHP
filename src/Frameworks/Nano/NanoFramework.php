@@ -13,13 +13,11 @@ class NanoFramework
      * NanoFramework implements a very minimal framework using the Aura
      * router.
      */
-    function __construct($config)
+    private function __construct($config)
     {
-        echo "=====<pre>";
-        var_dump($config);
-        echo "</pre>";
-
         L::AssertStruct($config, self::DEF_Config());
+
+        $this->router = new Router($config['router']);
     }
 
     public static function NewWithConfigString($yamlString)
@@ -40,4 +38,13 @@ class NanoFramework
             L::END
         );
     }
+
+    function get_router() {
+        return $this->router;
+    }
+
+    function go() {
+        $this->router->route();
+    }
+
 }
