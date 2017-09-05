@@ -53,20 +53,36 @@ class L {
     }
 
     /**
-     * AssertStruct ensures that a structure matches a definition
+     * CheckStruct checks that a structure matches a definition,
+     * returning an error if it does not.
      */
-    public static function AssertStruct($input, $struct) {
+    public static function CheckStruct($input, $struct) {
+        // Ensure inputs are valid
+        self::assert(self::is_struct_def($input),
+            "L::CheckStruct: Input is not a L::Struct array");
+        self::assert(self::is_struct_def($struct),
+            "L::CheckStruct: Struct is not a L::Struct definition");
+
         // Iterate over keys in structure definition
         foreach ($struct as $key => $default_value) {
             // Skip if meta key
-            if (prop === L::METAKEY) {
+            if ($key === L::METAKEY) {
                 continue;
             }
             // Ensure key exists in input data
             if (!array_key_exists($key, $input)) {
-                trigger_error("Input did not match struct definition",
-                    E_USER_ERROR);
+                return "Input did not match struct definition";
             }
+        }
+        return NULL;
+    }
+    /**
+     * AssertStruct ensures that a structure matches a definition
+     */
+    public static function AssertStruct($input, $struct) {
+        $result = self::CheckStruct($input, $struct);
+        if ($result !== NULL) {
+            trigger_error($result, E_USER_ERROR);
         }
     }
 
