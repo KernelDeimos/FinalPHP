@@ -32,6 +32,28 @@ class NanoFramework
         return self::NewWithConfigString(file_get_contents($yamlFile));
     }
 
+    public static function NewWithConfigFiles(...$files)
+    {
+        // Load contents of each configuration file
+        $strings = array();
+        foreach ($files as $file) {
+            // TODO: error handling for file_get_contents
+            $strings[] = file_get_contents($file);
+        }
+
+        // Initialize config with definition
+        $config = self::DEF_Config();
+
+        // Marshal file contents into config object,
+        // allowing consequtive files to override parameters.
+        foreach($strings as $string) {
+            $parsed = Yaml::parse($string);
+            $config = L::Marshal($parsed, $config);
+        }
+
+        return new NanoFramework($config);
+    }
+
     public static function DEF_Config() {
         return L::Struct(
             L::Prop("router", Router::DEF_Config()),
