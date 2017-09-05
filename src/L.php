@@ -73,6 +73,29 @@ class L {
             if (!array_key_exists($key, $input)) {
                 return "Input did not match struct definition";
             }
+            // Get expected type of value
+            $expectedType = $struct[L::METAKEY][$key]['type'];
+            $actualType = gettype($input[$key]);
+            // Perform type assertion of expected type is trivial to test
+            if (in_array(
+                $expectedType,
+                array('bool', 'float', 'int', 'string')
+            )) {
+                if ($actualType !== $expectedType) {
+                    return "Type of $key was $actualType; " .
+                        "expected $expectedType.";
+                }
+            }
+            // Perform recursive call if expected type is another
+            // L::Struct definition.
+            if (gettype($expectedType) === "array") {
+                if (array_key_exists(L::METAKEY, $expectedType)) {
+                    $result = self::CheckStruct($input[$key], $expectedType);
+                    if ($result !== NULL) {
+                        return "In key $key: " . $result;
+                    }
+                }
+            }
         }
         return NULL;
     }
