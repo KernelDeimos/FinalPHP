@@ -17,7 +17,10 @@ class NanoFramework
     {
         L::AssertStruct($config, self::DEF_Config());
 
+        $this->errors = new ErrorHandler($config['errors']);
         $this->router = new Router($config['router']);
+
+        $this->errors->attach();
     }
 
     public static function NewWithConfigString($yamlString)
@@ -51,12 +54,13 @@ class NanoFramework
             $config = L::Marshal($parsed, $config);
         }
 
-        return new NanoFramework($config);
+        return new NanoFramework($config); 
     }
 
     public static function DEF_Config() {
         return L::Struct(
             L::Prop("router", Router::DEF_Config()),
+            L::Prop("errors", ErrorHandler::DEF_Config()),
             L::END
         );
     }
@@ -66,7 +70,12 @@ class NanoFramework
     }
 
     function go() {
-        $this->router->route();
+        $controllerAPI = (object)array();
+        // Expose components to controller API
+        $controllerAPI->errors = $this->errors;
+
+        // Run router
+        $this->router->route($controllerAPI);
     }
 
 }

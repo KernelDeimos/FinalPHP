@@ -40,7 +40,7 @@ class Router
         return $this->routerMap->post(...$args);
     }
 
-    function route() {
+    function route($controllerAPI) {
         // Generate request object using zend-diactoros
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
@@ -85,7 +85,7 @@ class Router
         }
         // Instantiate and run controller
         $controller = new $class();
-        $controller->on_request($context);
+        $controller->handler($context, $controllerAPI);
     }
 
     public static function DEF_config() {
