@@ -79,7 +79,7 @@ class L {
             // Perform type assertion of expected type is trivial to test
             if (in_array(
                 $expectedType,
-                array('bool', 'float', 'int', 'string')
+                array('boolean', 'float', 'int', 'string')
             )) {
                 if ($actualType !== $expectedType) {
                     return "Type of $key was $actualType; " .
@@ -167,7 +167,7 @@ class L {
 
     private static function get_default_value_of_type($type) {
         switch ($type) {
-            case 'bool':
+            case 'boolean':
                 return false;
             case 'float':
                 return 0.0;
