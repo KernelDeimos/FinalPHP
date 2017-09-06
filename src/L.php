@@ -127,33 +127,38 @@ class L {
                 "Struct is not a L::Struct definition");
         }
 
-        // Ensure meta key exists
         foreach ($struct as $key => $default_value) {
             // Skip meta key
             if ($key === L::METAKEY) {
                 continue;
             }
-            if (array_key_exists($key, $input)) {
-                // Check if this key is another L::Struct definition
-                $expectedType = $struct[L::METAKEY][$key]['type'];
-                if (self::is_struct_def($expectedType)) {
+
+            // Check if this key is another L::Struct definition
+            $expectedType = $struct[L::METAKEY][$key]['type'];
+            if (self::is_struct_def($expectedType)) {
+                // If the input dees not specify the contents of
+                // a nested struct, then an empty array will be
+                // passed to the recursive _marshal call to create
+                // a nested struct with default values.
+                $inVal = array();
+                if (array_key_exists($key, $input)) {
                     // Get the input value to compare to
-                    $inVal = $input[$key];
-                    // For this case, NULL is considered the same
-                    // as an ampty array
-                    if ($inVal === NULL) {
-                        $inVal = array();
+                    if ($inVal !== NULL) {
+                        $inVal = $input[$key];
                     }
-                    // List 
-                    list ($result, $err) =
-                        self::_marshal($inVal, $expectedType);
-                    if ($err !== NULL) {
-                        return array(NULL,"In $key: ".$err);
-                    }
-                    $struct[$key] = $result;
-                } else {
-                    $struct[$key] = $input[$key];
                 }
+                // Recursively call marshal on inner struct def
+                list ($result, $err) =
+                    self::_marshal($inVal, $expectedType);
+                if ($err !== NULL) {
+                    return array(NULL,"In $key: ".$err);
+                }
+                $struct[$key] = $result;
+            }
+            // This is not a nested L::Struct definition; simply
+            // replace the default value if input has a value
+            else if (array_key_exists($key, $input)) {
+                $struct[$key] = $input[$key];
             }
         }
         $err = self::CheckStruct($struct, $struct);
