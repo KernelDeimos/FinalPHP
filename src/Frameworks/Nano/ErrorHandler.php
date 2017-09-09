@@ -29,7 +29,7 @@ class ErrorHandler
             array($this, 'handle_error')
         );
         register_shutdown_function(
-            array($this, 'handle_fatal')
+            array($this, 'handle_shutdown')
         );
     }
 
@@ -54,9 +54,13 @@ class ErrorHandler
         $report['file']    = $errfile;
         $report['line']    = $errline;
 
+        $isFatal = false;
+
         switch ($level) {
-        case E_RECOVERABLE_ERROR:
+        case E_ERROR:
 		case E_USER_ERROR:
+            $isFatal = true;
+        case E_RECOVERABLE_ERROR:
             $this->logsError[] = $report;
 			break;
 		case E_WARNING:
@@ -75,16 +79,35 @@ class ErrorHandler
                     $errstr, $errno, 0, $errfile, $errline
                 );
             }
+        } else {
+            return !$isFatal;
         }
     }
 
-    function handle_fatal()
+    function handle_shutdown()
     {
+        $lastErr = error_get_last();
+        if ($lastErr['type'])
         $reversed = array_reverse($this->fatalCallbacks);
         foreach ($reversed as $callback) {
             $err = error_get_last();
             $callback($err);
         }
+    }
+
+    function get_fatal_error() {
+        if (count($this->logsError) < 1) {
+            return NULL;
+        }
+        $index = count($this->logsError) - 1;
+        if (!array_key_exists($index, $this->logsError)) {
+            return NULL;
+        }
+        $err = $this->logsError[$index];
+        if ($err['level'] & (E_ERROR | E_USER_ERROR) !== 0) {
+            return $err;
+        }
+        return NULL;
     }
 
     public static function DEF_Config() {
