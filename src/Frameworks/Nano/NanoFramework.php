@@ -24,6 +24,9 @@ class NanoFramework
 
         $this->errors->attach();
 
+        // Initialize tools map
+        $this->tools = array();
+
         // Add sandwichwares
         if ($config['mode'] === 'test') {
             $swDebugErrors = new Sandwichware\DebugErrors();
@@ -83,9 +86,15 @@ class NanoFramework
         $controllerAPI = (object)array();
         // Expose components to controller API
         $controllerAPI->errors = $this->errors;
+        $controllerAPI->tools = $this->tools;
 
         // Run router
         $this->router->route($controllerAPI);
+    }
+
+    function add_tool($name, $tool)
+    {
+        $this->tools[$name] = $tool;
     }
 
 }
