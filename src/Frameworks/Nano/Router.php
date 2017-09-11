@@ -25,11 +25,18 @@ class Router
         // Set config property
         $this->config = $config;
 
+        // Initialize array of "sandwichwares"
+        $this->sandwichwares = array();
+
         // Instantiate router container
         $this->routerContainer = new RouterContainer(
             $this->config['base_path']
         );
         $this->routerMap = $this->routerContainer->getMap();
+    }
+
+    function add_sandwichware($ware) {
+        $this->sandwichwares[] = $ware;
     }
 
     function GET(...$args) {
@@ -83,9 +90,24 @@ class Router
                     E_USER_ERROR);
             }
         }
+
+        // Execute "underware" on context
+        foreach ($this->sandwichwares as $ware) {
+            if (method_exists($ware, "before_handler")) {
+                $ware->before_handler($context, $controllerAPI);
+            }
+        }
+
         // Instantiate and run controller
         $controller = new $class();
         $controller->handler($context, $controllerAPI);
+
+        // Execute "overware" on context
+        foreach ($this->sandwichwares as $ware) {
+            if (method_exists($ware, "after_handler")) {
+                $ware->after_handler($context, $controllerAPI);
+            }
+        }
     }
 
     public static function DEF_config() {
