@@ -23,8 +23,17 @@ class ControllerContext
             $globals['src_path'] = getcwd();
         }
 
-        $this->request = $request;
+        // Add globals to instance
+        $this->globals = $globals;
+
+        // Add params to instance
         $this->params = $params;
+
+        // Add request to instance
+        $this->request = $request;
+
+        // Initialize controller and vars
+        $this->vars  = array(); // Variables set by sandwichwares
     }
 
     public static function DEF_Globals() {
@@ -39,14 +48,30 @@ class ControllerContext
      * global is a getter for variables provided to all controllers.
      */
     function global($key) {
-        return $globals[$key];
+        return $this->globals[$key];
     }
 
     /**
-     * get is a getter for URL parameters.
+     * param is a getter for URL parameters.
+     */
+    function param($key)
+    {
+        return $this->$params[$key];
+    }
+
+    /**
+     * get is a getter for variables set by sandwichwares.
      */
     function get($key)
     {
-        return $this->$params[$key];
+        return $this->vars[$key];
+    }
+
+    /**
+     * set is a method for sandwichwares to expose variables.
+     */
+    function set($key, $val)
+    {
+        $this->vars[$key] = $val;
     }
 }
