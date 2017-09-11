@@ -8,6 +8,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class NanoFramework
 {
+    const MODE_LIVE = "live";
+    const MODE_TEST = "test";
     
     /**
      * NanoFramework implements a very minimal framework using the Aura
@@ -21,6 +23,13 @@ class NanoFramework
         $this->router = new Router($config['router']);
 
         $this->errors->attach();
+
+        // Add sandwichwares
+        if ($config['mode'] === 'test') {
+            $swDebugErrors = new Sandwichware\DebugErrors();
+            $this->router->add_sandwichware($swDebugErrors);
+            $this->errors->on_fatal(array($swDebugErrors, "fatal_handler"));
+        }
     }
 
     public static function NewWithConfigString($yamlString)
@@ -59,6 +68,7 @@ class NanoFramework
 
     public static function DEF_Config() {
         return L::Struct(
+            L::Prop("mode", "string"),
             L::Prop("router", Router::DEF_Config()),
             L::Prop("errors", ErrorHandler::DEF_Config()),
             L::END
