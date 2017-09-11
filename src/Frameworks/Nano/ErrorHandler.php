@@ -87,11 +87,12 @@ class ErrorHandler
     function handle_shutdown()
     {
         $lastErr = error_get_last();
-        if ($lastErr['type'])
-        $reversed = array_reverse($this->fatalCallbacks);
-        foreach ($reversed as $callback) {
-            $err = error_get_last();
-            $callback($err);
+        if ($lastErr['type'] & (E_USER_ERROR | E_ERROR)) {
+            $reversed = array_reverse($this->fatalCallbacks);
+            foreach ($reversed as $callback) {
+                $err = error_get_last();
+                $callback($err);
+            }
         }
     }
 
