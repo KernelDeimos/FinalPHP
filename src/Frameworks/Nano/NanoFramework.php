@@ -86,7 +86,8 @@ class NanoFramework
         $controllerAPI = (object)array();
         // Expose components to controller API
         $controllerAPI->errors = $this->errors;
-        $controllerAPI->tools = $this->tools;
+        $controllerAPI->tools  = $this->tools;
+        $controllerAPI->config = $config;
 
         // Run router
         $this->router->route($controllerAPI);
