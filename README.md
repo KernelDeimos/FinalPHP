@@ -19,22 +19,24 @@ The recommended way to install FinalPHP is using Composer. For information regar
 ### Installation From Repository
 Add the text below to a new file called `composer.json` in the project root, then run `composer install` in the same directory.
 
-    {
-      "autoload": {
-        "psr-4": {
-          "":"src/"
-        }
-      },
-      "repositories":[
-        {
-          "type": "vcs",
-          "url": "git@github.com:KernelDeimos/FinalPHP.git"
-        }
-      ],
-      "require": {
-        "dubedev/finalphp": "dev-master"
-      }
+```json
+{
+  "autoload": {
+    "psr-4": {
+      "":"src/"
     }
+  },
+  "repositories":[
+    {
+      "type": "vcs",
+      "url": "git@github.com:KernelDeimos/FinalPHP.git"
+    }
+  ],
+  "require": {
+    "dubedev/finalphp": "dev-master"
+  }
+}
+```
   
 This should work as is, but sometimes it can be problematic. If this does not work, refer to the next section.
 
@@ -52,6 +54,7 @@ refer to the steps following.
 #### Step 1: Create index.php
 
 Add the following code text to the main source file (ex: `index.php`)
+
 ```php
 require('vendor/autoload.php');
 use \FinalPHP\Frameworks\Nano;
@@ -65,6 +68,7 @@ $f = Nano\NanoFramework::NewWithConfigFiles("./nano.yml");
 
 $f->go();
 ```
+
 **Note:** The NewWithConfigFiles constructor is a variadic function, and allows
 specification of multiple configuration files.
 Parameters in a subsequent file may override those parameters of any preceding file.
@@ -73,11 +77,13 @@ Parameters in a subsequent file may override those parameters of any preceding f
 
 Add the following text to a new file named `nano.yml` in the project root.
 
-    mode: test
-    router:
-      base_path: /
-    errors:
-      errors_to_exceptions: true
+```yaml
+mode: test
+router:
+  base_path: /
+errors:
+  errors_to_exceptions: true
+```
 
 **Note:** It is necessary base_path to a different value if the project
 is not under the web root. For example, if the project is to be accessed at
@@ -88,17 +94,19 @@ is not under the web root. For example, if the project is to be accessed at
 Create a new file called `Index.php` in the directory `src/Controllers` relative
 to the project root.
 
-    <?php
+```php
+<?php
 
-    namespace Controllers;
+namespace Controllers;
 
-    class Index
+class Index
+{
+    function handler($c, $api)
     {
-        function handler($c, $api)
-        {
-            echo "It Works";
-        }
+        echo "It Works";
     }
+}
+```
 
 #### Step 4: Test Setup
 
