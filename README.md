@@ -52,19 +52,19 @@ refer to the steps following.
 #### Step 1: Create index.php
 
 Add the following code text to the main source file (ex: `index.php`)
+```php
+require('vendor/autoload.php');
+use \FinalPHP\Frameworks\Nano;
 
-    require('vendor/autoload.php');
-    use \FinalPHP\Frameworks\Nano;
+$f = Nano\NanoFramework::NewWithConfigFiles("./nano.yml");
 
-    $f = Nano\NanoFramework::NewWithConfigFiles("./nano.yml");
+{
+    $r = $f->get_router();
+    $r->GET("index.read", "/", "Index");
+}	
 
-    {
-        $r = $f->get_router();
-        $r->GET("index.read", "/", "Index");
-    }	
-
-    $f->go();
-
+$f->go();
+```
 **Note:** The NewWithConfigFiles constructor is a variadic function, and allows
 specification of multiple configuration files.
 Parameters in a subsequent file may override those parameters of any preceding file.
