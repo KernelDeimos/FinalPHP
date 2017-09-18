@@ -113,3 +113,33 @@ class Index
 Visit the URL corresponding to the project root to ensure the framework has been
 setup correctly. For example, if the project is under `~/public_html/myproject`,
 the corresponding URL may be `http://127.0.0.1/myproject`.
+
+### Frameworks/Nano: Adding Tools
+This framework makes it easy to make components or data available to all
+controllers by adding it to the frameowork as a tool. The following example
+adds an instance of the Twig template engine from Symfony to NanoFramework.
+
+#### Example 1: Adding Twig to Framework
+```php
+// ... <index.php>
+$f = Nano\NanoFramework::NewWithConfigFiles("./nano.yml", "./server.yml");
+
+{
+    $loader = new Twig_Loader_Filesystem('./templates');
+    $twig = new Twig_Environment($loader);
+    $f->add_tool("twig", $twig);
+}
+// ...
+```
+#### Example 2: Using Twig in Controller
+```php
+// ... <src/Controllers/Index.php>
+class Index
+{
+    function handler($c, $capi)
+    {
+        $tmpl = $api->tools['twig']->load('templates/index.html.twig');
+        echo $tmpl->render();
+    }
+}
+```
