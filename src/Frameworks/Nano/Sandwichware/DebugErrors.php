@@ -28,7 +28,7 @@ LOGO;
                 echo "\n --- " . ucwords($key) . " ---\n";
                 foreach ($report as $k => $error) {
                     printf("%8d: ", $k);
-                    echo "|".$error['message'] . "|\n";
+                    echo "|".$error['message'] . "| (".$error['file'].":".$error['line'].")\n";
                 }
             }
         }
