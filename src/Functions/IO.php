@@ -11,16 +11,21 @@ class IO
     public static function MarshalFiles($struct, ...$files)
     {
         // TODO: Infer JSON or YAML from file extension
+
+        // Return unified struct with configuration from each file
         return L::Reduce(
-            // TODO: Map should be capable of variadic input instead of nesting
-            // maps so that code like this is more readable.
+            // To reduce: Parsed YAML from each file
             L::Map(
-                L::Map($files, file_get_contents),
-                array('Symfony\Component\Yaml\Yaml', 'parse')
+                // For each value in
+                $files,
+                // Map with the following functions
+                file_get_contents, array('\Symfony\Component\Yaml\Yaml', 'parse')
             ),
-            function ($structSoFar, $value) {
-                return L::Marshal($value, $structSoFar);
-            },
+            // Reduce function: Apply parsed YAML to each struct state
+            L::ReverseArgs(
+                array('\FinalPHP\L', 'Marshal')
+            ),
+            // Reduce initialization: Empty struct
             $struct
         );
 
