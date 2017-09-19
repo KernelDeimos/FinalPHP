@@ -7,6 +7,8 @@ class L {
 
     const METAKEY = "__fphp_meta";
 
+    const L = "\FinalPHP\L";
+
     public static function Struct(...$props) {
         // $data represents the default initialization of the struct defined
         // using this language tool.
