@@ -117,6 +117,31 @@ class L {
         return $result;
     }
 
+    public static function Map($input, $function) {
+        $output = array();
+        foreach($input as $key => $value) {
+            $output[$key] = $function($value);
+        }
+        return $output;
+    }
+
+    public static function Filter($input, $function) {
+        $output = array();
+        foreach($input as $key => $value) {
+            if ($function($value)) {
+                $output[$key] = $value;
+            }
+        }
+        return $output;
+    }
+
+    public static function Reduce($input, $function, $init) {
+        foreach($input as $key => $value) {
+            $init = $function($init, $value);
+        }
+        return $init;
+    }
+
     private static function _marshal($input, $struct) {
         // Ensure inputs are valid
         if (!is_array($input)) {
