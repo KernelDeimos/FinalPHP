@@ -35,6 +35,11 @@ class NanoFramework
         }
     }
 
+    public static function NewWithConfigStruct($struct)
+    {
+        return new NanoFramework($struct);
+    }
+
     public static function NewWithConfigString($yamlString)
     {
         $parsed = Yaml::parse($yamlString);
