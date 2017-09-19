@@ -117,10 +117,14 @@ class L {
         return $result;
     }
 
-    public static function Map($input, $function) {
+    public static function Map($input, ...$functions) {
         $output = array();
         foreach($input as $key => $value) {
-            $output[$key] = $function($value);
+            $tmp = $value;
+            foreach($functions as $function) {
+                $tmp = $function($tmp);
+            }
+            $output[$key] = $tmp;
         }
         return $output;
     }
