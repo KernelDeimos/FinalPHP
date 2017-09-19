@@ -18,6 +18,7 @@ class NanoFramework
     private function __construct($config)
     {
         L::AssertStruct($config, self::DEF_Config());
+        $this->config = $config;
 
         $this->errors = new ErrorHandler($config['errors']);
         $this->router = new Router($config['router']);
@@ -92,7 +93,7 @@ class NanoFramework
         // Expose components to controller API
         $controllerAPI->errors = $this->errors;
         $controllerAPI->tools  = $this->tools;
-        $controllerAPI->config = $config;
+        $controllerAPI->config = $this->config;
 
         // Run router
         $this->router->route($controllerAPI);
