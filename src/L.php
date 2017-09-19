@@ -117,6 +117,12 @@ class L {
         return $result;
     }
 
+    public static function ReverseArgs($function) {
+        return function (...$args) use ($function) {
+            return $function(...array_reverse($args));
+        };
+    }
+
     public static function Map($input, ...$functions) {
         $output = array();
         foreach($input as $key => $value) {
