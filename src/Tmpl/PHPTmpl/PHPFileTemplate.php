@@ -2,7 +2,7 @@
 
 namespace FinalPHP\Tmpl\PHPTmpl;
 
-class Template {
+class PHPFileTemplate {
 	private $vars = array();
 	private $templateFile = '';
 
