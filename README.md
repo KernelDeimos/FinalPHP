@@ -143,3 +143,55 @@ class Index
     }
 }
 ```
+### Frameworks/Nano: Adding Sandwichwares
+Sandwichware serves the same purpose as middleware in other frameworks. These
+components extend the request handler, and can do anything a controller can do
+before the controller is invoked.
+
+Unlike middleware, a sandwichware doesn't invoke the next handler. Instead, the
+router component invokes a before_handler method on each registered sandwichware,
+then calls the controller, then invokes an after_handler method on each registered
+sandwichware in reverse order.
+
+The following is an example definition of a sandwichware that records the controller
+execution time as a comment at the bottom of the response.
+
+#### src/Handlers/Time.php
+```php
+<?php
+
+namespace Handlers;
+
+class Time
+{
+    function __construct()
+    {
+        $this->startTS = NULL;
+        $this->stopTS = NULL;
+    }
+    function before_handler($c, $api)
+    {
+        $this->startTS = microtime(true);
+    }
+    function after_handler($c, $api)
+    {
+        $this->endTS = microtime(true);
+        echo "<!-- TIME ";
+        echo $this->endTS - $this->startTS;
+        echo "-->";
+    }
+}
+```
+
+To include this sandwichware, it can be added directly to the router as
+demonstrated.
+
+#### index.php
+```php
+// ... <index.php>
+{
+    $r = $f->get_router();
+    $r->add_sandwichware(new \Handlers\Time());
+}
+// ...
+```
