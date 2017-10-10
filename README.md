@@ -156,7 +156,7 @@ sandwichware in reverse order.
 The following is an example definition of a sandwichware that records the controller
 execution time as a comment at the bottom of the response.
 
-#### src/Handlers/Time.php
+#### New file: src/Handlers/Time.php
 ```php
 <?php
 
@@ -186,7 +186,7 @@ class Time
 To include this sandwichware, it can be added directly to the router as
 demonstrated.
 
-#### index.php
+#### Addition to: index.php
 ```php
 // ... <index.php>
 {
@@ -195,3 +195,62 @@ demonstrated.
 }
 // ...
 ```
+
+Loading any page should now display the amount of time taken to execute the
+controller, as described earlier.
+
+### Using Templates
+FinalPHP provides classes under `\FinalPHP\Tmpl` that implement various
+template functionalities. Each sub-path of this namespace is described
+below.
+
+#### \FinalPHP\Tmpl\IncludeTmpl
+One of the simplest ways to make a template is using raw PHP. This is considered
+a traditional approach, but it is supported in many frameworks including FinalPHP.
+
+Using this kind of template is almost as simple as calling `include()`.
+The convenient `Template` class provided keeps all template-related values in one place.
+
+Below is an example of a controller that serves a `homepage.php` file located
+inside a `templates/` directory under the project root.
+
+```php
+<?php
+
+namespace Controllers;
+
+use FinalPHP\Tmpl\IncludeTmpl\Template as IncTemplate;
+
+class Index
+{
+    function handler($c, $api)
+    {
+        $tmpl = new IncTemplate("templates/homepage.php");
+        $tmpl->title = "Hello World Page";
+        $tmpl->text = "Hello, World!";
+        $tmpl->Render();
+    }
+}
+```
+
+The document under `templates/homepage.php` might look like this:
+```html
+<html>
+    <head>
+        <title><?php echo $title; ?></title>
+    </head>
+    <body><?php echo $text; ?></body>
+</html>
+```
+
+#### \FinalPHP\Tmpl\PHPTmpl
+This package implements templates using HTML-generation functions in PHP.
+This will be further documented soon.
+
+#### \FinalPHP\Tmpl\Base
+This namespace contains one class, `Template`. This is an abstract class which
+provides a public method `->Render()`. The `Template` class of any other
+subpackage of `\FinalPHP\Tmpl` will extend this class.
+
+Any `Template` object also overrides the magic `__set()` method as a convenient
+way to set variables that will be available to the template.
