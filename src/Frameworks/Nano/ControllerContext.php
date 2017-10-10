@@ -9,7 +9,7 @@ class ControllerContext
     /**
      * ControllerContext provides the API which controllers will use.
      */
-    function __construct($request, $params, $globals)
+    function __construct($request, $params, $extras, $globals)
     {
         L::AssertStruct($globals, self::DEF_Globals());
         if ($globals['web_path'] == "")
@@ -25,6 +25,9 @@ class ControllerContext
 
         // Add globals to instance
         $this->globals = $globals;
+
+        // Add tags to instance
+        $this->extras = $extras;
 
         // Add params to instance
         $this->params = $params;
@@ -42,6 +45,10 @@ class ControllerContext
             L::Prop("src_path", "string"),
             L::END
         );
+    }
+
+    function get_route_extras() {
+        return $this->extras;
     }
 
     /**

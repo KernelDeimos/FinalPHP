@@ -40,11 +40,15 @@ class Router
     }
 
     function GET(...$args) {
-        return $this->routerMap->get(...$args);
+        $auraRoute = $this->routerMap->get(...$args);
+        $route = new Route($auraRoute);
+        return $route;
     }
 
     function POST(...$args) {
-        return $this->routerMap->post(...$args);
+        $auraRoute = $this->routerMap->post(...$args);
+        $route = new Route($auraRoute);
+        return $route;
     }
 
     function route($controllerAPI) {
@@ -75,7 +79,9 @@ class Router
         $context = new ControllerContext(
             $request,
             $route->attributes,
+            $route->extras,
             $globals);
+            // TODO: Add context here
 
         // Determine controller class from route
         $class = NULL;
