@@ -2,13 +2,17 @@
 
 namespace FinalPHP\Tmpl\PHPTmpl;
 
-abstract class Template
+abstract class Template extends \FinalPHP\Tmpl\Base\Template
 {
-    private $vars;
+    abstract protected function generate($nodes, $vars);
 
-    abstract protected function do_render($vars);
-
-    function Render() {
-        echo $this->do_render($vars);
+    function do_render($vars) {
+        $doc = Gen::Document();
+        $children = $doc->GetChildren();
+        $nodes = array();
+        $nodes['head'] = $children[0];
+        $nodes['body'] = $children[1];
+        $this->generate($nodes, $vars);
+        return $doc;
     }
 }
