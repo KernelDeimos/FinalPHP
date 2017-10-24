@@ -66,7 +66,18 @@ class Router
         $route = $matcher->match($request);
 
         if (! $route) {
-            die("TODO: Implement this error based on case in ddev-framework");
+            $failed = $matcher->getFailedRoute();
+            $ecode = 404;
+            switch ($failed->failedRule)
+            {
+                case 'Aura\Router\Rule\Allows':
+                    $ecode = 405;
+                case 'Aura\Router\Rule\Accepts':
+                    $ecode = 406;
+            }
+            http_response_code($ecode);
+            echo "Error $ecode";
+            return;
         }
 
         // Add route attributes to the request
