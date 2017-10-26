@@ -40,14 +40,33 @@ class Router
     }
 
     function GET(...$args) {
+        // Modify route argument to ensure leading slash
+        $args[1] = $this->_filter_route($args[1]);
+
         $auraRoute = $this->routerMap->get(...$args);
         $route = new Route($auraRoute);
         return $route;
     }
 
     function POST(...$args) {
+        // Modify route argument to ensure leading slash
+        $args[1] = $this->_filter_route($args[1]);
+
         $auraRoute = $this->routerMap->post(...$args);
         $route = new Route($auraRoute);
+        return $route;
+    }
+
+    /**
+     * This function ensures there's a leading slash on any
+     * route path. This is important because Aura will attempt
+     * to concatename the route with the basepath using
+     * trivial string concatenation, which can unintuitive
+     * behaviour.
+     * Ex: access to /basepathhome instead of /basepath/home
+     */
+    private function _filter_route($route) {
+        $route = '/'.ltrim($route, '/');
         return $route;
     }
 
@@ -130,9 +149,22 @@ class Router
     public static function DEF_config() {
         return L::Struct(
             L::Prop("controller_namespace", "string"),
-            L::Prop("base_path", "string"),
+            L::Prop("base_path", self::TYPE_basepath()),
             L::END
         );
+    }
+
+    public static function TYPE_basepath() {
+        return function($value) {
+            if ($value === NULL) return "";
+            if (strlen($value) > 0) {
+                $value = trim($value, "/");
+                if (strlen($value) > 0) {
+                    $value = '/'.$value;
+                }
+            }
+            return $value;
+        };
     }
 
 }
