@@ -195,7 +195,15 @@ class L {
             // This is not a nested L::Struct definition; simply
             // replace the default value if input has a value
             else if (array_key_exists($key, $input)) {
-                $struct[$key] = $input[$key];
+                if (self::is_filter_type($expectedType)) {
+                    // For filter types, run the input value
+                    // through the filter.
+                    $struct[$key] = $expectedType($input[$key]);
+                } else {
+                    // Non-filter type - simply use input
+                    // value as-is.
+                    $struct[$key] = $input[$key];
+                }
             }
         }
         $err = self::CheckStruct($struct, $struct);
@@ -203,6 +211,10 @@ class L {
     }
 
     private static function get_default_value_of_type($type) {
+        if (self::is_filter_type($type)) {
+            return $type(NULL);
+        }
+
         switch ($type) {
             case 'boolean':
                 return false;
@@ -228,8 +240,16 @@ class L {
         return false;
     }
 
+    private static function is_filter_type($type) {
+        if (is_callable($type)) return true;
+        return false;
+    }
+
     private static function assert($check, $message) {
         if (!$check) {
+            echo "<pre>";
+            var_dump(debug_backtrace());
+            echo "</pre>";
             trigger_error($message, E_USER_ERROR);
         }
     }
