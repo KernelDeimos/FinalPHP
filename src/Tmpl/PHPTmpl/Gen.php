@@ -14,7 +14,7 @@ class Gen {
 		);
 		return new Tag("link", $ats);
 	}
-	static function JS($src) {
+	static function JS($src, $antiCache = false) {
 		if ($antiCache) {
 			$src = $src.'?'.time();
 		}
