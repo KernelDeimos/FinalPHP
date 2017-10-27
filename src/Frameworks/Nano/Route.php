@@ -11,8 +11,11 @@ class Route
     function __construct($auraRoute) {
         $this->auraRoute = $auraRoute;
 
+        $this->sandwichwares = array();
+
         $this->extras = array();
         $this->extras['tags'] = array();
+
         $this->_update();
     }
 
@@ -28,11 +31,16 @@ class Route
     }
 
     function _update() {
+        $this->extras['sandwichwares'] = &$this->sandwichwares;
         $this->auraRoute->extras($this->extras);
     }
 
     function set($key, $val) {
         $this->extras[$key] = $val;
         $this->_update();
+    }
+
+    function add_sandwichware($ware) {
+        $this->sandwichwares[] = $ware;
     }
 }

@@ -133,6 +133,11 @@ class Router
                 $ware->before_handler($context, $controllerAPI);
             }
         }
+        foreach ($route->extras['sandwichwares'] as $ware) {
+            if (method_exists($ware, "before_handler")) {
+                $ware->before_handler($context, $controllerAPI);
+            }
+        }
 
         // Instantiate and run controller
         $controller = new $class();
@@ -140,6 +145,11 @@ class Router
 
         // Execute "overware" on context
         foreach ($this->sandwichwares as $ware) {
+            if (method_exists($ware, "after_handler")) {
+                $ware->after_handler($context, $controllerAPI);
+            }
+        }
+        foreach ($route->extras['sandwichwares'] as $ware) {
             if (method_exists($ware, "after_handler")) {
                 $ware->after_handler($context, $controllerAPI);
             }
