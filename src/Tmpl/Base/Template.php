@@ -7,7 +7,7 @@ abstract class Template
     private $vars;
 
     function __construct() {
-        //
+        $this->vars = array();
     }
 
     abstract protected function do_render($vars);
@@ -21,6 +21,6 @@ abstract class Template
     }
 
     function __toString() {
-        return $this->do_render($vars);
+        return $this->do_render($this->vars);
     }
 }

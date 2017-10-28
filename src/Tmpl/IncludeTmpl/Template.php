@@ -9,6 +9,8 @@ class Template extends \FinalPHP\Tmpl\Base\Template
     }
     function do_render($vars) {
         foreach ($vars as $key => $value) $$key = $value;
-        include($filename);
+        ob_start();
+            include($filename);
+        return ob_get_clean();
     }
 }
