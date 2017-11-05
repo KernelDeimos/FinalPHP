@@ -63,7 +63,7 @@ class ControllerContext
      */
     function param($key)
     {
-        return $this->$params[$key];
+        return $this->params[$key];
     }
 
     /**
