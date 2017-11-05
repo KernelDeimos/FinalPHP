@@ -12,6 +12,7 @@ abstract class Template extends \FinalPHP\Tmpl\Base\Template
         $nodes = array();
         $nodes['head'] = $children[0];
         $nodes['body'] = $children[1];
+        $nodes['html'] = $doc;
         $this->generate($nodes, $vars);
         return $doc;
     }
