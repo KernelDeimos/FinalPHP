@@ -48,6 +48,16 @@ class Tag {
         return $this->children;
     }
 
+    function GetAttribute($key)
+    {
+        return $this->attributes[$key];
+    }
+
+    function SetAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
     function autosetType()
     {
         $name = $this->name;
