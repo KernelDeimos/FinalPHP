@@ -29,6 +29,10 @@ abstract class Template
         $this->vars[$key] = $val;
     }
 
+    function aggregate($vars) {
+        foreach ($vars as $key => $value) $this->vars[$key] = $value;
+    }
+
     function __toString() {
         return $this->do_render($this->vars);
     }
