@@ -3,6 +3,19 @@
 namespace FinalPHP\Frameworks\Nano\Sandwichware;
 
 class DebugErrors {
+    function before_handler($c, $api) {
+        $c->set('finalphp.debug', $this);
+        $this->userlogs = array();
+    }
+    function log($message) {
+        $this->userlogs[] = $message;
+    }
+    function dump($message) {
+        ob_start();
+        var_dump($message);
+        $userlog = ob_get_clean();
+        $this->userlogs[] = "DUMP>>>\n".trim($userlog)."\n<<<";
+    }
     function after_handler($c, $api) {
         $reports = $api->errors->get_reports();
 
@@ -18,10 +31,11 @@ ______ _             _______ _   _ ______
 LOGO;
 
         echo "\n\n === ERROR REPORT ===\n\n";
-        printf("Error count:  %8d\nWarn count:   %8d\nNotice count: %8d\n",
+        printf("Error count:  %8d\nWarn count:   %8d\nNotice count: %8d\nUser logs:    %8d\n",
             count($reports['errors']),
             count($reports['warnings']),
-            count($reports['notices'])
+            count($reports['notices']),
+            count($this->userlogs)
         );
         foreach ($reports as $key => $report) {
             if (count($report) > 0) {
@@ -31,6 +45,11 @@ LOGO;
                     echo "|".$error['message'] . "| (".$error['file'].":".$error['line'].")\n";
                 }
             }
+        }
+        echo "\n --- User Logs ---\n";
+        foreach ($this->userlogs as $k => $userlog) {
+            printf("%8s  ", $k);
+            echo "|".$userlog."|\n";
         }
         echo "\nEND OF ERROR REPORT -->";
     }
